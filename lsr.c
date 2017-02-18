@@ -5,23 +5,27 @@
 #include <unistd.h>
 
 char restaurant_array[100][100];
-
+int exist_file = 1;
 
 int readRestaurant(){
 	FILE * fp;
 	char * line = NULL;
 	size_t len = 0;
 	ssize_t read;
+	
 	fp = fopen("restaurant.txt","r+");
 	if (fp == NULL){
-        exit(EXIT_FAILURE);
-			}
-	while ((read = getline(&line, &len, fp)) != -1) {
-				int i = 0;
-				strcpy(restaurant_array[i],read);
-			  printf("Retrieved line of length %zu :\n", read);
-			  printf("%s", line);
-				i += 1;
+        fp = fopen("restaurant.txt" ,"a");
+        exist_file = 0;
+	}
+	else{
+		int i = 0;
+		while ((read = getline(&line, &len, fp)) != -1) {
+					strcpy(restaurant_array[i],line);
+				 	printf("Retrieved line of length %zu :\n", read);
+				  	printf("%s", line);
+					i += 1;
+		}
 	}
 	fclose(fp);
 
@@ -49,15 +53,10 @@ int add_restaurant(char rest_name[100]){
 	return 0;
 }
 
-// int file_exist (char *filename)
-// {
-//   struct stat   buffer;
-//   return (stat (filename, &buffer) == 0);
-// }
 
 int show_restaurant(){
 	int i;
-	printf("%lu\n", sizeof(&restaurant_array));
+	//printf("%lu\n", sizeof(&restaurant_array));
 	for(i = 0; i < 100; i++){
 		if(strcmp(restaurant_array[i], "") != 0){
 			printf("%s\n", restaurant_array[i]);
@@ -80,26 +79,48 @@ int random_restaurant(){
 int main(){
 
 	const int k = 1;
-
-	readRestaurant();
+	
 	char name[50];
 	printf("Hello, I am the restaurant random choicer, what's your name? :D \n");
 	scanf("%s",name);
-	printf("Hello %s! What would you want today?\n1.just random a restaurant for me\n2.show me all the restaurant\n3.add a restaurant\n",name);
-	char choice[1];
-	scanf("%s",choice);
-	int num_choice =  atoi(choice);
-	if(num_choice == 1){
-		random_restaurant();
+
+	readRestaurant();
+	if(exist_file == 0){
+		printf("Hello %s ! You have no restaurant now, would you like to add a restaurant?\n1.Yes\n2.No\n", name);
+		char add_restaurant_choice[1];
+		scanf("%s",add_restaurant_choice);
+		int num_add_restaurant_choice =  atoi(add_restaurant_choice);
+		if(num_add_restaurant_choice == 1){
+			printf("please enter the restaurant:\n");
+			char restaurant_name[100];
+			scanf("%s",restaurant_name);
+			add_restaurant(restaurant_name);
+		}
+		else{
+			printf("R.I.P\n");
+		}
+		
+		exist_file = 1;
 	}
-	else if(num_choice == 2){
-		show_restaurant();
-	}
-	else if(num_choice == 3){
-		char new_restuarant[100];
-		printf("%s\n", "please enter a new restaurant:");
-		scanf("%s", new_restuarant);
-		add_restaurant(new_restuarant);
+	else{
+		printf("Hello %s! What would you want today?\n1.just random a restaurant for me\n2.show me all the restaurant\n3.add a restaurant\n",name);
+		char choice[1];
+		scanf("%s",choice);
+		int num_choice =  atoi(choice);
+
+
+		if(num_choice == 1){
+			random_restaurant();
+		}
+		else if(num_choice == 2){
+			show_restaurant();
+		}
+		else if(num_choice == 3){
+			char new_restuarant[100];
+			printf("%s\n", "please enter a new restaurant:");
+			scanf("%s", new_restuarant);
+			add_restaurant(new_restuarant);
+		}
 	}
 
 	while(k){
