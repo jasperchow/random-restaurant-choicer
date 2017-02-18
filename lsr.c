@@ -6,6 +6,27 @@
 
 char restaurant_array[100][100];
 
+
+int readRestaurant(){
+	FILE * fp;
+	char * line = NULL;
+	size_t len = 0;
+	ssize_t read;
+	fp = fopen("restaurant.txt","r+");
+	if (fp == NULL){
+        exit(EXIT_FAILURE);
+			}
+	while ((read = getline(&line, &len, fp)) != -1) {
+				int i = 0;
+				strcpy(restaurant_array[i],read);
+			  printf("Retrieved line of length %zu :\n", read);
+			  printf("%s", line);
+				i += 1;
+	}
+	fclose(fp);
+
+	return 0;
+}
 int ra_length(){
 	int i;
 	int result = 0;
@@ -30,7 +51,7 @@ int add_restaurant(char rest_name[100]){
 
 // int file_exist (char *filename)
 // {
-//   struct stat   buffer;   
+//   struct stat   buffer;
 //   return (stat (filename, &buffer) == 0);
 // }
 
@@ -49,7 +70,7 @@ int random_restaurant(){
 	int size = ra_length();
 	printf("the length is %d\n", size);
 	srand(time(NULL));
-	int r = rand() % size; 
+	int r = rand() % size;
 	printf("random number is %d\n", r);
 	printf("today our choice is  %s \n", restaurant_array[r]);
 	sleep(2);
@@ -59,17 +80,8 @@ int random_restaurant(){
 int main(){
 
 	const int k = 1;
-	strcpy(restaurant_array[0],"碳烤居");
-	strcpy(restaurant_array[1],"新香港");
-	strcpy(restaurant_array[2],"云南米线");
-	strcpy(restaurant_array[3],"九龙");
-	strcpy(restaurant_array[4],"新香港");
-	strcpy(restaurant_array[5],"得装");
-	strcpy(restaurant_array[6],"缘味米线");
-	strcpy(restaurant_array[7],"kinton拉面");
-	strcpy(restaurant_array[8],"charadise");
-	strcpy(restaurant_array[9],"嘿小面");
 
+	readRestaurant();
 	char name[50];
 	printf("Hello, I am the restaurant random choicer, what's your name? :D \n");
 	scanf("%s",name);
@@ -89,7 +101,7 @@ int main(){
 		scanf("%s", new_restuarant);
 		add_restaurant(new_restuarant);
 	}
-		
+
 	while(k){
 		printf("What would you want again?\n1.just random a restaurant for me\n2.show me all the restaurant\n3.add a restaurant\n");
 		char choice[1];
